@@ -29,20 +29,17 @@ def store(st, key, val):
 
 def file_r_w(path, key, val):
     """Open file and write dictionary to file in json_format"""
-    with open(path) as f:
-        fff = f.read()
-        print('In file: ', fff)
-        if len(fff) < 2:
-            print(len(fff))
+    if os.path.exists(path)==False:
+        with open(path, 'w') as f:
             dictionary=store({}, key, val)
-            f.seek(0)
             json.dump(dictionary, f)
-        else:
-            data = json.loads(fff)
-            with open(path, 'w') as f:
+    else:
+        with open(path, 'r+') as f:
+            data = json.load(f)
+            with open(path, 'w+') as f:
                 json.dump(store(data, key, val), f)
                 f.seek(0)
-        f.close()
+
 print(store({'name':['Alex'], 'surname':['Alexsandr'], 'nick':['Alex444']}, args.key, args.val))
 print(file_r_w(storage_path, args.key, args.val))
 
