@@ -6,7 +6,7 @@ import json
 
 #Path to temp directory
 storage_path = os.path.join(tempfile.gettempdir(), 'storage.data')
-print(storage_path)
+#print(storage_path)
 
 #Take argument from shell
 parser = argparse.ArgumentParser()
@@ -14,7 +14,7 @@ parser.add_argument("--key")
 parser.add_argument("--val")
 args = parser.parse_args()
 answer = [args.key ,args.val]
-print(answer)
+#print(answer)
 
 
 def store(st, key, val):
@@ -40,24 +40,19 @@ def file_r_w(path, key, val):
                 json.dump(store(data, key, val), f)
                 f.seek(0)
 
-print(store({'name':['Alex'], 'surname':['Alexsandr'], 'nick':['Alex444']}, args.key, args.val))
-print(file_r_w(storage_path, args.key, args.val))
-
-
-
-"""
-print(storage_path)
-
-with open(storage_path, 'a') as empty_file:
-    pass
-
-if os.stat(storage_path).st_size != 0:
-    with open(storage_path) as old_file:
-        old_store = json.load(old_file)
-        print (old_store)
-        store(old_store)
+if args.val is None:
+    if os.path.exists(storage_path)==False:
+        print(None)
+    else:
+        with open(storage_path, 'r+') as f:
+            data = json.load(f)
+            smth = (data.get(args.key, None))
+            if smth is None:
+                print(None)
+            else:
+                for val in smth:
+                    print(val, end=', ')
+		
 else:
-    with open(storage_path, 'w') as new_file:
-        new_store=store(new_file)
-        json.dump(new_store, new_file)
-"""
+    print(store({'name':['Alex'], 'surname':['Alexsandr'], 'nick':['Alex444']}, args.key, args.val))
+    print(file_r_w(storage_path, args.key, args.val))
