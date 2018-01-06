@@ -8,6 +8,10 @@ class CarBase:
         self.photo_file_name = photo_file_name
         self.carrying = carrying
 
+    def get_photo_file_ext(self):
+        filename, file_extension = os.path.splitext(self.photo_file_name)
+        return file_extension
+
 class Car(CarBase):
     car_type = 'car'
     def __init__(self, brand, photo_file_name, carrying, passenger_seats_count):
@@ -44,7 +48,6 @@ def get_car_list(csv_filename):
     with open(csv_filename, 'r+', encoding='utf-8') as csv_fd:
         reader = csv.reader(csv_fd, delimiter=';')
         next(reader)  # пропускаем заголовок
-        #print(reader)
         list_car = []
         for row in reader:
             car_property = {}
