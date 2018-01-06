@@ -1,3 +1,6 @@
+import csv
+import sys
+
 class CarBase:
     car_type = None
     def __init__(self, brand, photo_file_name, carrying):
@@ -36,9 +39,31 @@ class SpecMachine(CarBase):
     #return car_list
 
 
-track1 = Truck('Man', '2.jpeg', 20, '8x3x2.5')
-print(track1.car_type)
-print(track1.brand)
-print(track1.photo_file_name)
-print(track1.carrying)
-print(track1.get_body_volume())
+
+def get_car_list(csv_filename):
+    with open(csv_filename, 'r+', encoding='utf-8') as csv_fd:
+        reader = csv.reader(csv_fd, delimiter=';')
+        next(reader)  # пропускаем заголовок
+        #print(reader)
+        list_car = []
+        for row in reader:
+            car_property = {}
+            listtypeproperty = [
+                'car_type','brand','passenger_seats_count','photo_file_name',
+                'body_whl','carrying','extra'
+            ]
+            if len(row) < 7:
+                #print("Bad row")
+                continue
+            else:
+                for i in range(7):
+                    car_property[listtypeproperty[i]] = row[i]
+                #print(car_property)
+                list_car.append(car_property)
+        print(list_car)
+
+            
+
+
+
+get_car_list('coursera_week3_cars.csv')
