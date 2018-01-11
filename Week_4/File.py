@@ -1,3 +1,4 @@
+import io
 import os
 import tempfile
 
@@ -34,28 +35,36 @@ class File:
         with open(path_new_file, 'w') as f:
             f.write(data_obj)
             f.write(data_file)
-
-    def __iter__(self):
-        pass
+    
+    def __getitem__(self, index):
+        path_file = os.path.join(tempfile.gettempdir(), os.path.normcase(self.path_to_file))
+        #print(path_file)
+        with io.open(path_file, 'r+', encoding='utf-8') as f:
+            data_file = f.readlines()
+        return data_file[index]
+        
 
     def __str__(self):
         return self.path_to_file
 
 
-def _main():
+#def _main():
     #obj = File('/file.txt')
     #print(obj)
     #obj.write('line\n')
 
-    first = File('/first.txt')
-    first.write("I'm first")
-    second = File('/second.txt')
-    second.write("I'm second")
+    #first = File('/first.txt')
+    #first.write("I'm first")
+    #second = File('/second.txt')
+    #second.write("I'm second")
 
-    new_obj = first + second
+    #new_obj = first + second
+    #itr = File("file_doc")
+    #for i in itr:
+        #print(i)
     
 
 
-if __name__ == "__main__":
-    _main()
+#if __name__ == "__main__":
+    #_main()
 
