@@ -1,5 +1,6 @@
 import time
 import socket
+import json
 
 class Client:
     curent_time = time.time()
@@ -10,19 +11,26 @@ class Client:
 
     def get(self, key):
         with socket.create_connection((self.host, self.port),self.timeout) as sock:
-            sock.sendall(key.encode("utf8"))
-        #print(self.host, self.port ,self.timeout)
+            message = 'get {}\n'.format(key)
+            print(message)
+            sock.sendall(message.encode("utf8"))
+            received_data = sock.recv(1024)
+            #print(received_data.decode("utf8"))
+            data = json.loads(received_data.decode("utf8"))
+            #print(data, type(data))
+            return data
 
     def put(self, key, value, timestamp=curent_time):
         with socket.create_connection((self.host, self.port),self.timeout) as sock:
-            message = b'{} {} {}\n'.format(key, value, int(timestamp))
+            message = 'put {} {} {}\n'.format(key, value, int(timestamp))
             #print(message)
             sock.sendall(message.encode("utf8"))
+            
         
 class ClientError():
     pass
 
 
-#client = Client("127.0.0.1", 10001, timeout=15)
-#client.put("palm.cpu", 0.5)
+client = Client("127.0.0.1", 10001, timeout=150)
+print(client.get("*"))
         
