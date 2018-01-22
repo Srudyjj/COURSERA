@@ -17,7 +17,7 @@ with socket.socket() as sock:
                 data = conn.recv(1024)
                 if not data:
                     break
-                message = "ok\n palm.cpu 10.5 1501864247\n eardrum.cpu 15.3 1501864259\n\n"
+                message = "ok\n\n"
                 print(message.encode("utf8"))
                 send_data = conn.sendall(message.encode("utf8"))
                 

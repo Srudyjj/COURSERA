@@ -22,7 +22,7 @@ class Client:
         """Convert inner bite string to dictionary"""
         inner = inner_message.decode("utf8")
         new_dict = dict()
-        if inner is "ok\n\n":
+        if inner == 'ok\n\n':
             return new_dict
         else:
             data_sring = inner.replace("ok\n","").replace("\n\n","").splitlines()
