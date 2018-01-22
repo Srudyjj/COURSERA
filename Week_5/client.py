@@ -12,7 +12,6 @@ class Client:
     def get(self, key):
         with socket.create_connection((self.host, self.port),self.timeout) as sock:
             message = 'get {}\n'.format(key)
-            print(message)
             sock.sendall(message.encode("utf8"))
             received_data = sock.recv(1024)
             return self._parser(received_data)
@@ -45,10 +44,9 @@ class Client:
     def put(self, key, value, timestamp=curent_time):
         with socket.create_connection((self.host, self.port),self.timeout) as sock:
             message = 'put {} {} {}\n'.format(key, value, int(timestamp))
-            #print(message)
             sock.sendall(message.encode("utf8"))
             received_data = sock.recv(1024)
-            print(received_data.decode("utf8"))            
+            return received_data.decode("utf8")            
         
 class ClientError():
     pass
