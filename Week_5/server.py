@@ -17,7 +17,7 @@ with socket.socket() as sock:
                 data = conn.recv(1024)
                 if not data:
                     break
-                message = "ok\n\n"
-                print(message.encode("utf8"))
+                message = "\nok recived: {}\n\n".format(data.decode("utf8"))
+                print(message)
                 send_data = conn.sendall(message.encode("utf8"))
                 
