@@ -1,7 +1,5 @@
 import asyncio
 
-
-
 def run_server(host, port):
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
@@ -20,68 +18,6 @@ def run_server(host, port):
     loop.run_until_complete(server.wait_closed())
     loop.close()
 
-
-def command_hendler(string):
-    data_sring = string.replace("ok\n","").replace("\n\n","").split()
-    print(data_sring)
-    try:
-        if data_sring[0] == "put":
-            print("It's put")
-        elif data_sring[0] == "get":
-            print("It's get")
-        else:
-            print("error\n wrong command")
-    except IndexError:
-        raise ServerError("error\nwrong command\n\n")
-
-
-def _parser(self, inner_message):
-        """Convert inner bite string to dictionary"""
-        inner = inner_message.decode("utf8")
-        new_dict = dict()
-        try:
-            if inner == 'ok\n\n':
-                return new_dict
-            else:
-                data_sring = inner.replace("ok\n","").replace("\n\n","").splitlines()
-                data_list = []
-                for line in data_sring:
-                    splitted_line = line.lstrip().split()
-                    data_list.append(splitted_line)
-                for string in data_list:
-                    val = (int(string[2]), float(string[1]),)
-                    if string[0] in new_dict:
-                        new_dict[string[0]].append(val)
-                    else:
-                        new_dict[string[0]] = [val]
-                return new_dict
-        except IndexError:
-            raise ServerError("error\nwrong command\n\n")
-
-def get(self, key):
-        try:
-            with socket.create_connection((self.host, self.port),self.timeout) as sock:
-                message = 'get {}\n'.format(key)
-                sock.sendall(message.encode("utf8"))
-                received_data = sock.recv(1024)
-                return self._parser(received_data)
-        except socket.error:
-            raise ServerError("error\nwrong command\n\n")
-
-def put(self, key, value, timestamp=curent_time):
-        try:
-            with socket.create_connection((self.host, self.port),self.timeout) as sock:
-                message = 'put {} {} {}\n'.format(key, value, int(timestamp))
-                sock.sendall(message.encode("utf8"))
-                received_data = sock.recv(1024)
-                return received_data.decode("utf8")
-        except socket.error:
-            raise ServerError("error\nwrong command\n\n")    
-
-class ServerError(Exception):
-    pass
-
-
 class EchoServerClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -91,12 +27,59 @@ class EchoServerClientProtocol(asyncio.Protocol):
     def data_received(self, data):
         message = data.decode()
         print('Data received: {!r}'.format(message))
+        message_received = command_hendler(message)
+        print('Send: {!r}'.format(message_received))
+        self.transport.write(message_received.encode("utf8"))
+        
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-        print('Send: {!r}'.format(message))
-        self.transport.write(data)
-
+def command_hendler(string):
+    data_list = string.replace("ok\n","").replace("\n\n","").split()
+    print(data_list)
+    try:
+        if data_list[0] == "put":
+            print("It's put")
+            return _put(data_list)
+        elif data_list[0] == "get":
+            print("It's get")
+            return _get(data_list)
+        else:
+            return "error\n wrong command"
+    except IndexError:
+        raise ServerError("error\nwrong command\n\n")
         
 
+class ServerError(Exception):
+    pass
+
+def _put(string):
+        """Convert inner string to dictionary"""
+        val = (int(string[3]), float(string[2]),)
+        if string[1] in new_dict:
+            new_dict[string[1]].append(val)
+        else:
+            new_dict[string[1]] = [val]
+        return "ok\n\n"
+
+def _get(string):
+    message = "ok\n"
+    if string[1] == "*":
+        for key, value in new_dict.items():
+            for val in value:
+                message += "{} {} {}\n".format(key, val[0], val[1])
+    else:
+        value = new_dict.get(string[1], "\n")
+        if value != "\n":
+            for val in value:
+                message += "{} {} {}\n".format(string[1], val[0], val[1])
+        else:
+            message += value
+
+    return message
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        
+new_dict = {}
 
 if __name__ == "__main__":
     run_server("127.0.0.1", 8888)
