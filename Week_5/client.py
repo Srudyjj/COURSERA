@@ -62,5 +62,5 @@ class ClientError(Exception):
     pass
 
 
-# client = Client("127.0.0.1", 10001, timeout=150)
+# client = Client("127.0.0.1", 8888, timeout=150)
 # print(client.put("palm.cpu", 0.5, timestamp=1150864247))
